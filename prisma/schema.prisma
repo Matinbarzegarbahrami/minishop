@@ -14,11 +14,11 @@ model User {
   id         String   @id @default(uuid())
   phone      String   @unique
   password   String
-  expireAt   String?
+  expireAt   DateTime?
   verifyCode String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-
+  
   account  Account?
   orders   Order[]
   comments Comment[]
