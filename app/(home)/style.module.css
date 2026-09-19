@@ -22,7 +22,6 @@
 }
 .offerTextBox{
     display: flex;
-    justify-content: flex-end;
 }
 .menuBox{
     margin-bottom: 20px;

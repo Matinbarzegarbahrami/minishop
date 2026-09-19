@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =========================
+// User
+// =========================
+
+model User {
+  id         String   @id @default(uuid())
+  phone      String   @unique
+  password   String
+  expireAt   String?
+  verifyCode String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  account  Account?
+  orders   Order[]
+  comments Comment[]
+  ratings  Rating[]
+}
+
+// =========================
+// Account
+// =========================
+
+model Account {
+  id         String  @id @default(uuid())
+  firstName  String?
+  lastName   String?
+  address    String?
+  postalCode String?
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// =========================
+// Product
+// =========================
+
+model Product {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  price       Decimal
+  discount    Decimal?
+  inventory   Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comments   Comment[]
+  ratings    Rating[]
+  orderItems OrderItem[]
+
+  @@index([title])
+}
+
+// =========================
+// Rating
+// =========================
+
+model Rating {
+  id     String @id @default(uuid())
+  number Int
+
+  productId String
+  userId    String
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  // هر کاربر فقط یک بار برای هر محصول امتیاز بدهد
+  @@unique([userId, productId])
+  @@index([productId])
+}
+
+// =========================
+// Comment
+// =========================
+
+model Comment {
+  id        String   @id @default(uuid())
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  productId String
+  userId    String
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([userId])
+}
+
+// =========================
+// Order
+// =========================
+
+model Order {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  items OrderItem[]
+
+  @@index([userId])
+}
+
+// =========================
+// Order Item
+// =========================
+
+model OrderItem {
+  id String @id @default(uuid())
+
+  orderId   String
+  productId String
+
+  quantity Int
+  price    Decimal
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@unique([orderId, productId])
+  @@index([productId])
+}

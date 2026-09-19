@@ -13,12 +13,14 @@
 }
 .footerbox{
     padding: 0;
-    background-color: #BEBEBE;
+    background-color: #ffffff;
     height: 200px;
     border-top-left-radius: 60px;
     border-top-right-radius: 60px;
     display: flex;
-    justify-content: flex-end
+    border-width: 1px;
+    border-color: #960b8f;
+    box-shadow: 0 0 12px 0 #FF61F7;
 }
 .footertexes{
     text-align: right;
